@@ -6,7 +6,21 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             const memes = data.data.children;
             memes.forEach(meme => {
-                if (meme.data.post_hint === 'image') {
+                // Ensure it's an image post and has a valid image URL
+                let imageUrl = null;
+                if (meme.data.post_hint === 'image' && meme.data.url) {
+                    imageUrl = meme.data.url;
+                }
+                // Prioritize direct image from preview if available and it's a valid image type
+                if (meme.data.preview && meme.data.preview.images && meme.data.preview.images.length > 0 && meme.data.preview.images[0].source && meme.data.preview.images[0].source.url) {
+                    const previewUrl = meme.data.preview.images[0].source.url;
+                    // Basic check for image file extension
+                    if (previewUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
+                        imageUrl = previewUrl;
+                    }
+                }
+
+                if (imageUrl) {
                     const memeElement = document.createElement('div');
                     memeElement.classList.add('meme');
 
@@ -14,14 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     title.textContent = meme.data.title;
 
                     const image = document.createElement('img');
-                    image.src = meme.data.url;
+                    image.src = imageUrl; // Use the determined image URL for display
                     image.alt = meme.data.title;
 
                     const editButton = document.createElement('button');
                     editButton.textContent = 'Edit Meme';
-                    editButton.classList.add('btn'); // Use existing button style
+                    editButton.classList.add('btn');
                     editButton.addEventListener('click', () => {
-                        window.location.href = `edit.html?imageUrl=${encodeURIComponent(meme.data.url)}`;
+                        // Pass the determined image URL to the editor
+                        window.location.href = `edit.html?imageUrl=${encodeURIComponent(imageUrl)}`;
                     });
 
                     memeElement.appendChild(title);
