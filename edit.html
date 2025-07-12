@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="edit.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Meme<br>Tecnologia</div>
+        <a href="index.html" class="btn">Home</a>
+    </header>
+
+    <main class="main-container editor-page">
+        <section class="editor-card">
+            <h2 class="section-title">Simple Meme Editor</h2>
+            
+            <div class="editor-layout">
+                <div class="canvas-area">
+                    <canvas id="memeCanvas"></canvas>
+                </div>
+                <div class="controls-area">
+                    <div class="control-group">
+                        <label for="imageUpload">Upload Image:</label>
+                        <input type="file" id="imageUpload" accept="image/*">
+                    </div>
+                    <div class="control-group">
+                        <label for="imageUrl">Image URL:</label>
+                        <input type="text" id="imageUrl" placeholder="Paste image URL here">
+                        <button id="loadImageFromUrl" class="btn">Load from URL</button>
+                    </div>
+                    <div id="dropArea" class="drop-area">
+                        Drag & Drop Image Here
+                    </div>
+                    <div class="control-group">
+                        <label for="topText">Top Text:</label>
+                        <input type="text" id="topText" placeholder="Enter top text">
+                    </div>
+                    <div class="control-group">
+                        <label for="bottomText">Bottom Text:</label>
+                        <input type="text" id="bottomText" placeholder="Enter bottom text">
+                    </div>
+                    <button id="saveMeme" class="btn cta-button">Save Meme</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="edit.js"></script>
+</body>
+</html>
