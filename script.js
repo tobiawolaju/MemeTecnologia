@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
         memesSection.classList.add('hidden');
         editorSection.classList.add('hidden');
         section.classList.remove('hidden');
+
+        if (section === editorSection) {
+            document.dispatchEvent(new CustomEvent('editorShown'));
+        }
     }
 
     editMemesBtn.addEventListener('click', (e) => {
@@ -50,13 +54,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Smooth scrolling for any internal links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            const href = this.getAttribute('href');
+            if (href.length > 1) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }
         });
     });

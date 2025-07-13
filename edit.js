@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const canvasArea = document.querySelector('.canvas-area');
-    const canvas = new fabric.Canvas('memeCanvas');
+    const canvasElement = document.getElementById('memeCanvas');
+    let canvas = null; // Initialize canvas as null
+
     const imageUpload = document.getElementById('imageUpload');
     const addTextBtn = document.getElementById('addText');
     const textInput = document.getElementById('textInput');
@@ -10,74 +12,101 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentImage = null;
 
+    // Function to initialize/re-initialize canvas
+    const initializeCanvas = () => {
+        if (canvas) {
+            canvas.dispose(); // Dispose of previous canvas instance if it exists
+        }
+        
+        console.log('Initializing canvas:');
+        console.log('canvasArea offsetWidth:', canvasArea.offsetWidth);
+        console.log('canvasArea offsetHeight:', canvasArea.offsetHeight);
+
+        // Ensure canvasElement has correct dimensions before creating Fabric.js canvas
+        canvasElement.width = canvasArea.offsetWidth;
+        canvasElement.height = canvasArea.offsetHeight;
+        
+        console.log('canvasElement width (after setting):', canvasElement.width);
+        console.log('canvasElement height (after setting):', canvasElement.height);
+
+        canvas = new fabric.Canvas('memeCanvas');
+        canvas.renderAll();
+
+        console.log('Fabric.js canvas width:', canvas.getWidth());
+        console.log('Fabric.js canvas height:', canvas.getHeight());
+    };
+
+    // Listen for the custom event to initialize canvas
+    document.addEventListener('editorShown', () => {
+        initializeCanvas();
+    });
+
     function setCanvasBackgroundImage(imgSrc) {
+        const options = {};
+        if (!imgSrc.startsWith('data:')) {
+            options.crossOrigin = 'anonymous';
+        }
+
         fabric.Image.fromURL(imgSrc, (img) => {
-            currentImage = img;
-            canvas.clear();
+            if (img) {
+                currentImage = img;
+                canvas.clear();
 
-            const containerWidth = canvasArea.offsetWidth;
-            const containerHeight = canvasArea.offsetHeight;
+                const canvasWidth = canvas.getWidth();
+                const canvasHeight = canvas.getHeight();
 
-            let newWidth = img.width;
-            let newHeight = img.height;
+                const scaleX = canvasWidth / img.width;
+                const scaleY = canvasHeight / img.height;
+                const scale = Math.min(scaleX, scaleY);
 
-            const imgAspectRatio = img.width / img.height;
-            const containerAspectRatio = containerWidth / containerHeight;
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                    scaleX: scale,
+                    scaleY: scale,
+                    top: canvasHeight / 2,
+                    left: canvasWidth / 2,
+                    originX: 'center',
+                    originY: 'center'
+                });
 
-            if (imgAspectRatio > containerAspectRatio) {
-                newWidth = containerWidth;
-                newHeight = containerWidth / imgAspectRatio;
+                canvas.renderAll();
             } else {
-                newHeight = containerHeight;
-                newWidth = containerHeight * imgAspectRatio;
+                console.error('Fabric.js: Image object is null after loading from URL.');
             }
-
-            const padding = 20;
-            newWidth = Math.min(newWidth, containerWidth - padding * 2);
-            newHeight = Math.min(newHeight, containerHeight - padding * 2);
-
-            canvas.setWidth(newWidth);
-            canvas.setHeight(newHeight);
-
-            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                scaleX: newWidth / img.width,
-                scaleY: newHeight / img.height
-            });
-
-            canvas.renderAll();
-
-        }, { crossOrigin: 'anonymous' });
+        }, options, (err) => {
+            console.error('Fabric.js Image loading error:', err);
+        });
     }
 
     document.addEventListener('editMeme', (e) => {
         setCanvasBackgroundImage(e.detail.imageUrl);
     });
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const imageUrlFromParam = urlParams.get('imageUrl');
-    if (imageUrlFromParam) {
-        setCanvasBackgroundImage(decodeURIComponent(imageUrlFromParam));
-    } else {
-        canvas.setWidth(canvasArea.offsetWidth - 40);
-        canvas.setHeight(canvasArea.offsetHeight - 40);
-        canvas.renderAll();
-    }
-
     imageUpload.addEventListener('change', (e) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setCanvasBackgroundImage(event.target.result);
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    });
 
     addTextBtn.addEventListener('click', () => {
+        if (!canvas) return; // Ensure canvas is initialized
         const text = new fabric.IText(textInput.value || 'New Text', {
-            left: 50,
-            top: 50,
+            left: canvas.getWidth() / 2,
+            top: canvas.getHeight() / 2,
             fill: textColorInput.value,
-            fontSize: parseInt(fontSizeInput.value)
+            fontSize: parseInt(fontSizeInput.value),
+            originX: 'center',
+            originY: 'center'
         });
         canvas.add(text);
         canvas.setActiveObject(text);
         textInput.value = '';
+        canvas.renderAll();
     });
 
     textColorInput.addEventListener('change', () => {
+        if (!canvas) return; // Ensure canvas is initialized
         const activeObject = canvas.getActiveObject();
         if (activeObject && activeObject.type === 'i-text') {
             activeObject.set('fill', textColorInput.value);
@@ -86,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     fontSizeInput.addEventListener('input', () => {
+        if (!canvas) return; // Ensure canvas is initialized
         const activeObject = canvas.getActiveObject();
         if (activeObject && activeObject.type === 'i-text') {
             activeObject.set('fontSize', parseInt(fontSizeInput.value));
@@ -94,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     saveMemeBtn.addEventListener('click', () => {
-        if (!currentImage) {
+        if (!canvas || !currentImage) {
             alert('Please upload an image first!');
             return;
         }

@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 imageUrl = meme.data.url;
             }
             if (meme.data.preview && meme.data.preview.images && meme.data.preview.images.length > 0 && meme.data.preview.images[0].source && meme.data.preview.images[0].source.url) {
-                const previewUrl = meme.data.preview.images[0].source.url;
+                const previewUrl = meme.data.preview.images[0].source.url.replace(/&amp;/g, '&');
                 if (previewUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
                     imageUrl = previewUrl;
                 }
@@ -43,18 +43,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 editButton.textContent = 'Edit Meme';
                 editButton.classList.add('btn');
                 editButton.addEventListener('click', () => {
-                    const editorSection = document.getElementById('editor-section');
-                    const heroSection = document.getElementById('hero-section');
-                    const contentSection = document.getElementById('content-section');
-                    const memesSection = document.getElementById('memes-section');
+                    editButton.textContent = 'Loading...';
+                    editButton.disabled = true;
 
-                    heroSection.classList.add('hidden');
-                    contentSection.classList.add('hidden');
-                    memesSection.classList.add('hidden');
-                    editorSection.classList.remove('hidden');
+                    const proxiedImageUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
 
-                    const event = new CustomEvent('editMeme', { detail: { imageUrl } });
-                    document.dispatchEvent(event);
+                    fetch(proxiedImageUrl)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                                const base64data = reader.result;
+
+                                const editorSection = document.getElementById('editor-section');
+                                const heroSection = document.getElementById('hero-section');
+                                const contentSection = document.getElementById('content-section');
+                                const memesSection = document.getElementById('memes-section');
+
+                                heroSection.classList.add('hidden');
+                                contentSection.classList.add('hidden');
+                                memesSection.classList.add('hidden');
+                                editorSection.classList.remove('hidden');
+
+                                const event = new CustomEvent('editMeme', { detail: { imageUrl: base64data } });
+                                document.dispatchEvent(event);
+
+                                editButton.textContent = 'Edit Meme';
+                                editButton.disabled = false;
+                            };
+                            reader.readAsDataURL(blob);
+                        })
+                        .catch(error => {
+                            console.error('Error converting image to Base64:', error);
+                            alert('Could not load image for editing.');
+                            editButton.textContent = 'Edit Meme';
+                            editButton.disabled = false;
+                        });
                 });
 
                 memeElement.appendChild(title);
