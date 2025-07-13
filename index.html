@@ -6,24 +6,26 @@
     <title>Meme Tecnologia - Meme tech for meme marketers</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="edit.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="logo">Meme<br>Tecnologia</div>
         <div class="header-buttons">
-            <a href="edit.html" class="btn">Edit Memes</a>
-            <a href="memes.html" class="btn btn-login">Load Memes</a>
+            <a href="#" class="btn" id="edit-memes-btn">Edit Memes</a>
+            <a href="#" class="btn btn-login" id="load-memes-btn">Load Memes</a>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-container">
         <!-- Hero Section -->
-        <section class="hero-card">
+        <section id="hero-section" class="hero-card">
             <h1 class="hero-title">Meme tech for <span class="highlight">meme marketers</span></h1>
             <p class="hero-subtitle">
-                Get daily ideas. Edit fast. Jump on trends. Go viral. Make internet 
+                Get daily ideas. Edit fast. Jump on trends. Go viral. Make internet
                 moolah. Because your memes should make you <span class="highlight">millions</span>.
             </p>
 
@@ -44,7 +46,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Annotations -->
                     <div class="annotation annotation-1">Pre-loaded new memes</div>
                     <div class="annotation annotation-2">AI background removal</div>
@@ -72,20 +74,20 @@
         </section>
 
         <!-- Second Section -->
-        <section class="content-card">
+        <section id="content-section" class="content-card">
             <h2 class="section-title">Go from no idea to viral banger.</h2>
-            
+
             <p class="section-text">
                 Everyday there's new meme templates going viral.
             </p>
-            
+
             <p class="section-text">
-                We discover new trending memes via AI, programmatically load them into 
+                We discover new trending memes via AI, programmatically load them into
                 our editor, and send you daily emails with meme ideas.
             </p>
-            
+
             <p class="section-text">
-                The result: you get to jump on trends faster and go viral 10x easier all for 
+                The result: you get to jump on trends faster and go viral 10x easier all for
                 $6.9/mo.
             </p>
 
@@ -94,17 +96,61 @@
                 <div class="testimonial-avatar"></div>
                 <div class="testimonial-content">
                     <p class="testimonial-text">
-                        This is one of those products that quickly becomes a 
-                        status quo in your workflow. If you make content you 
-                        HAVE to use memes - it's free growth & changed my 
-                        business. And this is the platform to use to make 
+                        This is one of those products that quickly becomes a
+                        status quo in your workflow. If you make content you
+                        HAVE to use memes - it's free growth & changed my
+                        business. And this is the platform to use to make
                         them & go viral.
                     </p>
                     <div class="testimonial-author">Anonymous User</div>
                 </div>
             </div>
         </section>
+
+        <!-- Memes Section -->
+        <section id="memes-section" class="hidden">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search memes...">
+            </div>
+            <h1 class="section-title">Fresh Memes from Reddit</h1>
+            <div id="memes-container"></div>
+        </section>
+
+        <!-- Editor Section -->
+        <section id="editor-section" class="editor-page hidden">
+            <div class="editor-card">
+                <h2 class="section-title">Simple Meme Editor</h2>
+
+                <div class="editor-layout">
+                    <div class="canvas-area">
+                        <canvas id="memeCanvas"></canvas>
+                    </div>
+                    <div class="controls-area">
+                        <div class="control-group">
+                            <label for="imageUpload">Upload Image:</label>
+                            <input type="file" id="imageUpload" accept="image/*">
+                        </div>
+                        <div class="control-group">
+                            <label for="textInput">Text:</label>
+                            <input type="text" id="textInput" placeholder="Enter text">
+                        </div>
+                        <div class="control-group">
+                            <label for="textColor">Color:</label>
+                            <input type="color" id="textColor" value="#ffffff">
+                        </div>
+                        <div class="control-group">
+                            <label for="fontSize">Font Size:</label>
+                            <input type="range" id="fontSize" min="10" max="100" value="40">
+                        </div>
+                        <button id="addText" class="btn">Add Text</button>
+                        <button id="saveMeme" class="btn cta-button">Save Meme</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
     <script src="script.js"></script>
+    <script src="memes.js"></script>
+    <script src="edit.js"></script>
 </body>
 </html>
