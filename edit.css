@@ -48,3 +48,14 @@
 .cta-button {
     margin-top: 10px;
 }
+
+@media (max-width: 768px) {
+    .editor-layout {
+        flex-direction: column;
+    }
+
+    .canvas-area {
+        width: 100%;
+        height: auto;
+    }
+}
