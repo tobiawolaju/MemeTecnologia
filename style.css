@@ -1,47 +1,77 @@
 body {
     font-family: 'MS Sans Serif', 'Geneva', sans-serif;
-    background: #C0C0C0;
+    background: repeating-linear-gradient(
+        45deg,
+        #008080,
+        #008080 10px,
+        #006666 10px,
+        #006666 20px
+    ); /* Tiled teal background */
     color: #000;
+    margin: 0;
+    padding: 0;
+    border: 3px outset #C0C0C0; /* 3D border effect */
+    cursor: url('https://www.cursor.cc/cursor/arrow.cur'), auto; /* Custom cursor - a classic arrow */
 }
 
-.header {
-    background: #000080;
-    padding: 10px;
-    border-bottom: 2px solid #000;
-}
 
-.logo {
-    font-size: 20px;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 2px 2px #000;
+
+@keyframes flicker {
+    0% { text-shadow: 2px 2px #000; }
+    50% { text-shadow: 2px 2px 5px #fff; }
+    100% { text-shadow: 2px 2px #000; }
 }
 
 .btn {
-    background: #C0C0C0;
+    background: linear-gradient(to bottom, #C0C0C0 0%, #808080 100%); /* Grey gradient */
     border: 2px outset #fff;
+    border-right-color: #000;
+    border-bottom-color: #000;
     padding: 5px 10px;
     font-size: 14px;
     cursor: pointer;
-}
+    text-decoration: none;
+    color: #000;
+    text-align: center;
+    box-shadow: 2px 2px 0 #000; /* Simple shadow */
+   }
 
 .btn:active {
     border-style: inset;
+    background: #808080; /* Darker grey when active */
+    box-shadow: inset 1px 1px 0 #000;
 }
+
+.btn-login {
+    background: linear-gradient(to bottom, #008080 0%, #004040 100%); /* Teal gradient for login button */
+    border-color: #00FFFF #000000 #000000 #00FFFF;
+    color: #fff;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.btn-login:active {
+    background: #004040;
+}
+
+
+
 
 .main-container {
     width: 90%;
     max-width: 960px;
     margin: 20px auto;
-    background: #fff;
-    border: 2px solid #000;
+    background: #C0C0C0; /* Grey background for main container */
+    border: 3px outset #fff; /* 3D border effect */
     padding: 20px;
+    box-shadow: 5px 5px 0 #000; /* Drop shadow */
 }
 
 .hero-card, .content-card, .editor-card, .meme {
-    border: 1px solid #000;
+    border: 3px outset #fff; /* 3D border effect for cards */
     padding: 15px;
     margin-bottom: 15px;
+    background: #C0C0C0; /* Grey background for cards */
+    box-shadow: 2px 2px 0 #000; /* Drop shadow */
 }
 
 .hero-title {
@@ -94,4 +124,22 @@ body {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 20px;
     }
+}
+
+.marquee-text {
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    animation: marquee 15s linear infinite;
+    background-color: #FFFF00; /* Bright yellow background */
+    color: #FF0000; /* Red text */
+    padding: 5px 0;
+    border: 2px dashed #0000FF; /* Blue dashed border */
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+@keyframes marquee {
+    0%   { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
 }
